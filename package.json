@@ -1,0 +1,22 @@
+{
+  "name": "raspberry-pi-watering-system",
+  "version": "1.0.0",
+  "description": "A plant watering system pump controller.",
+  "main": "watering-system.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mrb2590/Raspberry-Pi-Watering-System.git"
+  },
+  "author": "Mike Buonomo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mrb2590/Raspberry-Pi-Watering-System/issues"
+  },
+  "homepage": "https://github.com/mrb2590/Raspberry-Pi-Watering-System#readme",
+  "dependencies": {
+    "onoff": "^5.0.1"
+  }
+}

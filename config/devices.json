@@ -1,0 +1,24 @@
+{
+  "rgbLed": {
+    "name": "RGB LED",
+    "pins": {
+      "red": {
+        "pin": 17
+      },
+      "green": {
+        "pin": 27
+      },
+      "blue": {
+        "pin": 22
+      }
+    }
+  },
+  "waterPump": {
+    "name": "Water Pump",
+    "pins": {
+      "power": {
+        "pin": 23
+      }
+    }
+  }
+}
