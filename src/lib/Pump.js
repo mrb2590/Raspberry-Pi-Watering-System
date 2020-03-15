@@ -25,21 +25,21 @@ class Pump {
   }
 
   powerOn () {
-    process.stdout.write('Powering on pump... ');
+    // process.stdout.write('Powering on pump... ');
 
     this.pin.writeSync(1);
-    this.state = 'on';
+    this.state = 'On';
 
-    process.stdout.write('Done\n');
+    // process.stdout.write('Done\n');
   }
 
   powerOff () {
-    process.stdout.write('Powering off pump... ');
+    // process.stdout.write('Powering off pump... ');
 
     this.pin.writeSync(0);
-    this.state = 'off';
+    this.state = 'Off';
 
-    process.stdout.write('Done\n');
+    // process.stdout.write('Done\n');
   }
 
   getState () {

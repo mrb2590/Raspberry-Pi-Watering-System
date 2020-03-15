@@ -33,7 +33,7 @@ class Button {
   onPressed (callback) {
     this.interval = setInterval(() => {
       if (this.isPressed()) {
-        process.stdout.write('Detected button press\n');
+        // process.stdout.write('Detected button press\n');
 
         callback();
       }

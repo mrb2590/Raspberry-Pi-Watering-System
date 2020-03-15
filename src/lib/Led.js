@@ -41,7 +41,7 @@ class Led {
 
   powerOn (color) {
     if (!this.pins[color].readSync()) {
-      process.stdout.write(`Powering on ${color} LED... `);
+      // process.stdout.write(`Powering on ${color} LED... `);
 
       if (this.blinkIntervals[color]) {
         clearInterval(this.blinkIntervals[color]);
@@ -50,13 +50,13 @@ class Led {
 
       this.pins[color].writeSync(1);
 
-      process.stdout.write('Done\n');
+      // process.stdout.write('Done\n');
     }
   }
 
   powerOff (color) {
     if (this.pins[color].readSync()) {
-      process.stdout.write(`Powering off ${color} LED... `);
+      // process.stdout.write(`Powering off ${color} LED... `);
 
       if (this.blinkIntervals[color]) {
         clearInterval(this.blinkIntervals[color]);
@@ -65,8 +65,12 @@ class Led {
 
       this.pins[color].writeSync(0);
 
-      process.stdout.write('Done\n');
+      // process.stdout.write('Done\n');
     }
+  }
+
+  getState (color) {
+    return this.pins[color].readSync() ? 'On' : 'Off';
   }
 
   getBlinkInterval (color) {

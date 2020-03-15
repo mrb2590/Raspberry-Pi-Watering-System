@@ -34,13 +34,7 @@ class WaterSensor {
     this.sensor.read((err, reading) => {
       if (err) throw err;
 
-      const value = Math.floor((reading.rawValue >= 700 ? 700 : reading.rawValue) / 800 * 100);
-
-      if (value !== this.lastFiveReadings[this.lastFiveReadings.length - 1]) {
-        process.stdout.write(`Water: ${value}\n`);
-      }
-
-      this.reading = value;
+      this.reading = Math.floor(reading.value * 100);
 
       this.lastFiveReadings.push(this.reading);
 
@@ -56,7 +50,7 @@ class WaterSensor {
 
   isEmpty () {
     let average = this.lastFiveReadings.reduce((a, b) => a + b) / this.lastFiveReadings.length;
-    return average < 70;
+    return average < 78;
   }
 
   onCheckWaterLevel (callback) {
@@ -64,7 +58,7 @@ class WaterSensor {
       this.updateReading();
 
       if (this.isEmpty()) {
-        process.stdout.write('Detected low water level!\n');
+        // process.stdout.write('Detected low water level!\n');
       }
 
       callback(this.isEmpty());
