@@ -32,6 +32,10 @@ class Pump {
     this.state = 'off';
     process.stdout.write('Done\n');
   }
+
+  getState () {
+    return this.state;
+  }
 }
 
 module.exports = Pump;
