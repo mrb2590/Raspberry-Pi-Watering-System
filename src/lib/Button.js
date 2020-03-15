@@ -1,23 +1,43 @@
+const Gpio = require('onoff').Gpio;
+
 class Button {
   constructor () {
+    this.interval = null;
     this.init();
   }
 
   init () {
     process.stdout.write('Initializing button... ');
-    this.Gpio = require('onoff').Gpio;
-    this.pin = new this.Gpio(26, 'in');
+
+    this.pin = new Gpio(26, 'in');
+
     process.stdout.write('Done\n');
   }
 
   kill () {
     process.stdout.write('Killing button... ');
+
     this.pin.unexport();
+
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
+
     process.stdout.write('Done\n');
   }
 
   isPressed () {
     return this.pin.readSync();
+  }
+
+  onPressed (callback) {
+    this.interval = setInterval(() => {
+      if (this.isPressed()) {
+        process.stdout.write('Detected button press\n');
+
+        callback();
+      }
+    }, 34);
   }
 }
 
