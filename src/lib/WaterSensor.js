@@ -36,7 +36,9 @@ class WaterSensor {
 
       const value = Math.floor((reading.rawValue >= 700 ? 700 : reading.rawValue) / 800 * 100);
 
-      process.stdout.write(`Water: ${value}\n`);
+      if (value !== this.lastFiveReadings[this.lastFiveReadings.length - 1]) {
+        process.stdout.write(`Water: ${value}\n`);
+      }
 
       this.reading = value;
 
@@ -54,7 +56,7 @@ class WaterSensor {
 
   isEmpty () {
     let average = this.lastFiveReadings.reduce((a, b) => a + b) / this.lastFiveReadings.length;
-    return average < 77;
+    return average < 70;
   }
 
   onCheckWaterLevel (callback) {
