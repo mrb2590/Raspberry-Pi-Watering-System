@@ -27,7 +27,7 @@ pump.powerOn();
 checkSensorLoop = setInterval(() => {
   waterSensor.updateReading();
 
-  if (waterSensor.isEmpty) {
+  if (waterSensor.getReading() < 75) {
     process.stdout.write('Detected low water level!\n');
 
     if (pump.state === 'on') {

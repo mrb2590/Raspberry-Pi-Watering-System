@@ -3,7 +3,7 @@ class Pump {
     this.init();
   }
 
-  init = () => {
+  init () {
     process.stdout.write('Initializing pump... ');
     this.Gpio = require('onoff').Gpio;
     this.pin = new this.Gpio(17, 'out');
@@ -11,7 +11,7 @@ class Pump {
     process.stdout.write('Done\n');
   }
 
-  kill = () => {
+  kill () {
     process.stdout.write('Killing pump... ');
     this.pin.writeSync(0);
     this.pin.unexport();
@@ -19,14 +19,14 @@ class Pump {
     process.stdout.write('Done\n');
   }
 
-  powerOn = () => {
+  powerOn () {
     process.stdout.write('Powering on pump... ');
     this.pin.writeSync(1);
     this.state = 'on';
     process.stdout.write('Done\n');
   }
 
-  powerOff = () => {
+  powerOff () {
     process.stdout.write('Powering off pump... ');
     this.pin.writeSync(0);
     this.state = 'off';
