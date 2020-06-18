@@ -111,29 +111,3 @@ class Log {
 }
 
 module.exports = Log;
-
-// const p = new Log;
-  
-// let r = 0;
-
-// setInterval(() => {
-// r++;
-//   p.writeStdOut([
-//     {
-//       key: 'Cheese',
-//       value: r
-//     },
-//     {
-//       key: 'Arm',
-//       value: r < 4 ? 'poo' : 'green'
-//     },
-//     {
-//       key: 'applesss',
-//       value: r +999
-//     },
-//     {
-//       key: 'mod',
-//       value: r %5
-//     }
-//   ])
-// }, 1000)

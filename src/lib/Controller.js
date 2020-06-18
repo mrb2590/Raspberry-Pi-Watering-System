@@ -14,6 +14,10 @@ class Controller {
     this.log = new Log;
     this.timerLoop = null;
     this.displayLoop = null;
+    this.timeLeft = 0;
+    this.timeToRun = 10000;
+    this.tickRate = 250;
+    this.status = 'Ok';
   }
 
   listen () {
@@ -23,13 +27,15 @@ class Controller {
     
     this.button.onPressed(() => {
       if (!this.timerLoop) {
-        this.runForTime(10000);
+        this.runForTime(this.timeToRun);
+        this.timeLeft = this.timeToRun;
       }
     });
     
-    this.waterSensor.onCheckWaterLevel((isEmpty) => {
-      if (isEmpty) {
-        this.status = 'Low water level - waiting for refill';
+    this.waterSensor.onCheckWaterLevel((hasLowWaterLevel) => {
+      if (hasLowWaterLevel) {
+        this.status = 'Waiting for more water';
+        this.timeLeft = 0;
         this.led.powerOff('green');
 
         if (this.pump.getState() === 'On') {
@@ -50,8 +56,8 @@ class Controller {
           this.led.blink('red', 250);
         }
       } else {
-        if (this.status === 'Low water level - waiting for refill') {
-          this.status = 'Standby';
+        if (this.status !== 'Running timer') {
+          this.status = 'Ok';
         }
 
         this.led.stopBlink('red');
@@ -74,12 +80,8 @@ class Controller {
           value: this.pump.getState()
         },
         {
-          key: 'Water Level',
-          value: this.waterSensor.getReading()
-        },
-        {
           key: 'Tank Status',
-          value: this.waterSensor.isEmpty() ? 'Empty' : 'Full'
+          value: this.waterSensor.hasLowWaterLevel() ? 'Empty' : 'Has Water'
         },
         {
           key: 'Red LED',
@@ -92,9 +94,17 @@ class Controller {
         {
           key: 'Green LED',
           value: this.led.getState('green')
+        },
+        {
+          key: 'Timer',
+          value: this.milConvert(this.timeLeft)
         }
       ]);
-    }, 500);
+
+      if (this.timeLeft !== 0) {
+        this.timeLeft -= this.tickRate;
+      }
+    }, this.tickRate);
   }
 
   kill () {
@@ -120,7 +130,7 @@ class Controller {
     this.status = 'Running timer';
     let time = 0;
 
-    if (this.waterSensor.isEmpty()) {
+    if (this.waterSensor.hasLowWaterLevel()) {
       return;
     }
 
@@ -156,10 +166,22 @@ class Controller {
 
         clearInterval(this.timerLoop);
         this.timerLoop = null;
+        this.status = 'Ok';
       }
   
       time += 10;
     }, 10);
+  }
+
+  milConvert (mil) {
+    if (mil === 0) {
+      return '0:00';
+    }
+
+    let minutes = Math.floor(mil / 60000);
+    let seconds = ((mil % 60000) / 1000).toFixed(0);
+
+    return minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
   }
 }
 

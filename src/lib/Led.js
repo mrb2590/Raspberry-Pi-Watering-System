@@ -14,9 +14,9 @@ class Led {
     process.stdout.write('Initializing LEDs... ');
 
     this.pins = {
-      red: new Gpio(13, 'out'),
-      yellow: new Gpio(6, 'out'),
-      green: new Gpio(5, 'out')
+      red: new Gpio(12, 'out'),
+      yellow: new Gpio(5, 'out'),
+      green: new Gpio(13, 'out')
     };
 
     process.stdout.write('Done\n');
