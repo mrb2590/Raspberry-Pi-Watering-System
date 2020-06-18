@@ -23,8 +23,8 @@ class Controller {
       }
     });
     
-    this.waterSensor.onCheckWaterLevel((isEmpty) => {
-      if (isEmpty) {
+    this.waterSensor.onCheckWaterLevel((hasLowWaterLevel) => {
+      if (hasLowWaterLevel) {
         this.led.powerOff('green');
 
         if (this.pump.getState() === 'on') {
@@ -70,7 +70,7 @@ class Controller {
   runForTime (endTime) {
     let time = 0;
 
-    if (this.waterSensor.isEmpty()) {
+    if (this.waterSensor.hasLowWaterLevel()) {
       return;
     }
 

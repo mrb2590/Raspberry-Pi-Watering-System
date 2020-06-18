@@ -9,7 +9,7 @@ class Pump {
   init () {
     process.stdout.write('Initializing pump... ');
 
-    this.pin = new Gpio(17, 'out');
+    this.pin = new Gpio(26, 'out');
 
     process.stdout.write('Done\n');
   }

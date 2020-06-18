@@ -1,19 +1,14 @@
-const Mcpadc = require('mcp-spi-adc');
+const Gpio = require('onoff').Gpio;
 
 class WaterSensor {
   constructor () {
-    this.interval = null;
-    this.lastFiveReadings = [];
     this.init();
   }
 
   init () {
     process.stdout.write('Initializing water sensor... ');
 
-    this.sensor = Mcpadc.open(0, {speedHz: 20000}, err => {
-      if (err) throw err;
-      this.updateReading();
-    });
+    this.pin = new Gpio(23, 'in');
 
     process.stdout.write('Done\n');
   }
@@ -21,54 +16,28 @@ class WaterSensor {
   kill () {
     process.stdout.write('Killing water sensor... ');
 
+    this.pin.unexport();
+
     if (this.interval) {
       clearInterval(this.interval);
-
-      this.interval = null;
     }
 
     process.stdout.write('Done\n');
   }
 
-  updateReading () {
-    this.sensor.read((err, reading) => {
-      if (err) throw err;
-
-      const value = Math.floor((reading.rawValue >= 700 ? 700 : reading.rawValue) / 800 * 100);
-
-      if (value !== this.lastFiveReadings[this.lastFiveReadings.length - 1]) {
-        process.stdout.write(`Water: ${value}\n`);
-      }
-
-      this.reading = value;
-
-      this.lastFiveReadings.push(this.reading);
-
-      if (this.lastFiveReadings.length > 5) {
-        this.lastFiveReadings.shift();
-      }
-    });
-  }
-
-  getReading () {
-    return this.reading;
-  }
-
-  isEmpty () {
-    let average = this.lastFiveReadings.reduce((a, b) => a + b) / this.lastFiveReadings.length;
-    return average < 70;
+  hasLowWaterLevel () {
+    return this.pin.readSync();
   }
 
   onCheckWaterLevel (callback) {
     this.interval = setInterval(() => {
-      this.updateReading();
-
-      if (this.isEmpty()) {
+      if (this.hasLowWaterLevel()) {
         process.stdout.write('Detected low water level!\n');
+
       }
 
-      callback(this.isEmpty());
-    }, 100);
+      callback(this.hasLowWaterLevel());
+    }, 250);
   }
 }
 

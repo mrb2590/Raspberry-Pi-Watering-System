@@ -9,7 +9,7 @@ class Button {
   init () {
     process.stdout.write('Initializing button... ');
 
-    this.pin = new Gpio(26, 'in');
+    this.pin = new Gpio(16, 'in');
 
     process.stdout.write('Done\n');
   }
