@@ -32,6 +32,12 @@ sudo cp watering-system.service /etc/systemd/system/water-system.service
 sudo systemctl enable watering-system
 ```
 
+3. Start the service
+
+```bash
+sudo systemctl start watering-system
+```
+
 ## Usage
 
 To run the program manually with the table output
