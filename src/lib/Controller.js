@@ -5,7 +5,8 @@ const Button = require('./Button.js');
 const Log = require('./Log.js');
 
 class Controller {
-  constructor () {
+  constructor (hideOutput) {
+    this.hideOutput = hideOutput;
     this.status = 'Initializing';
     this.pump = new Pump;
     this.waterSensor = new WaterSensor;
@@ -21,17 +22,21 @@ class Controller {
   }
 
   listen () {
-    process.on('SIGINT', () => {
-      this.kill();
-    });
-    
+    // process.on('SIGINT', () => {
+      // this.kill();
+    // });
+    ['SIGINT', 'SIGTERM', 'SIGQUIT']
+      .forEach(signal => process.on(signal, () => {
+          this.kill();
+      }));
+
     this.button.onPressed(() => {
       if (!this.timerLoop) {
         this.runForTime(this.timeToRun);
         this.timeLeft = this.timeToRun;
       }
     });
-    
+
     this.waterSensor.onCheckWaterLevel((hasLowWaterLevel) => {
       if (hasLowWaterLevel) {
         this.status = 'Waiting for more water';
@@ -41,12 +46,12 @@ class Controller {
         if (this.pump.getState() === 'On') {
           this.pump.powerOff();
         }
-      
+
         if (this.timerLoop) {
           clearInterval(this.timerLoop);
-      
+
           this.timerLoop = null;
-      
+
           this.led.powerOff('red');
           this.led.powerOff('yellow');
           this.led.powerOff('green');
@@ -69,42 +74,44 @@ class Controller {
       }
     });
 
-    this.displayLoop = setInterval(() => {
-      this.log.writeStdOut([
-        {
-          key: 'System Status',
-          value: this.status
-        },
-        {
-          key: 'Pump',
-          value: this.pump.getState()
-        },
-        {
-          key: 'Tank Status',
-          value: this.waterSensor.hasLowWaterLevel() ? 'Empty' : 'Has Water'
-        },
-        {
-          key: 'Red LED',
-          value: this.led.getState('red')
-        },
-        {
-          key: 'Yellow LED',
-          value: this.led.getState('yellow')
-        },
-        {
-          key: 'Green LED',
-          value: this.led.getState('green')
-        },
-        {
-          key: 'Timer',
-          value: this.milConvert(this.timeLeft)
-        }
-      ]);
+    if (!this.hideOutput) {
+      this.displayLoop = setInterval(() => {
+        this.log.writeStdOut([
+          {
+            key: 'System Status',
+            value: this.status
+          },
+          {
+            key: 'Pump',
+            value: this.pump.getState()
+          },
+          {
+            key: 'Tank Status',
+            value: this.waterSensor.hasLowWaterLevel() ? 'Empty' : 'Has Water'
+          },
+          {
+            key: 'Red LED',
+            value: this.led.getState('red')
+          },
+          {
+            key: 'Yellow LED',
+            value: this.led.getState('yellow')
+          },
+          {
+            key: 'Green LED',
+            value: this.led.getState('green')
+          },
+          {
+            key: 'Timer',
+            value: this.milConvert(this.timeLeft)
+          }
+        ]);
 
-      if (this.timeLeft !== 0) {
-        this.timeLeft -= this.tickRate;
-      }
-    }, this.tickRate);
+        if (this.timeLeft !== 0) {
+          this.timeLeft -= this.tickRate;
+        }
+      }, this.tickRate);
+    }
   }
 
   kill () {
@@ -134,13 +141,11 @@ class Controller {
       return;
     }
 
-    // process.stdout.write('Starting pump timer\n');
-
     this.pump.powerOn();
-  
+
     this.timerLoop = setInterval(() => {
       const timeSection = Math.floor(endTime / 3);
-  
+
       if (time >= 0 && time < timeSection) {
         this.led.powerOn('red');
         this.led.powerOn('yellow');
@@ -154,12 +159,12 @@ class Controller {
         this.led.powerOff('yellow');
         this.led.powerOff('green');
       }
-  
+
       if (time >= endTime) {
         if (this.pump.getState() === 'On') {
           this.pump.powerOff();
         }
-  
+
         this.led.powerOff('red');
         this.led.powerOff('yellow');
         this.led.powerOff('green');
@@ -168,7 +173,7 @@ class Controller {
         this.timerLoop = null;
         this.status = 'Ok';
       }
-  
+
       time += 10;
     }, 10);
   }
